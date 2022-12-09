@@ -267,7 +267,7 @@ A lot is going on so let's break it down:
 * correct password does basically nothing
 * login/username is read into global buffer
 * password is read into buffer allocated on stack in main and leaves at 100 - 64 = 36 bytes to play with buffer overflow and rewrite the stackframe
-* offset (to get to eip) from second fgets is 96(allocated on stack) - 28(start of buffer) + 12(alingment) = 80 bytes
+* offset (to get to eip) from second fgets is 96(allocated on stack) - 28(start of buffer) + 12(alignment) = 80 bytes
 
 Let's check our offset calculations with this [tool](https://wiremask.eu/tools/buffer-overflow-pattern-generator/)
 

@@ -98,8 +98,8 @@ Let's use it to find offset of input string on stack. `aaaa` if hex is 61616161:
 
 Offset = 10
 
-%x -> Output Hexadecimal Number
-%n -> Writes the number of bytes till the format string to memory
+* %x -> Output Hexadecimal Number
+* %n -> Writes the number of bytes till the format string to memory
 
 Another point of vulnerability is exit function. 
 
@@ -151,7 +151,13 @@ Shellcode EGG is at address 0xffffd8e2 + 10(offset) = 0xffffd8ec
 
 We are going to print shellcode EGG at exit: 4 lower bytes 0xd8ec (decimal 55532) at 0x080497e0 and 4 higher bytes  0xffff (decimal 65535) at 0x080497e2
 
-But we will need to move this addresses around (%hn means to not write only a short value (usually 2 bytes) at the given address):
+But we will need to move this addresses around. 
+
+- %hn means to write only a short value (usually 2 bytes) at the given address
+- DWORD `NOPE` or any other 4 bytes between addresses are used by %x between %hn to control the width and what is written
+- To calculate width:
+    - 'byte to be written' - 'output byte' + 'width of %x before %hn' -> for lower bytes
+    - 'byte to be written' - 'previous byte' -> for higher bytes
 
 ***
 
@@ -184,3 +190,7 @@ We have our offsets for low and high parts of address and it is time to try them
     level06
     cat /home/users/level06/.pass
     h4GtNnaMs2kZFN92ymTr2DcJHAzMfzLW25Ep59mq
+
+***
+
+[Useful link](https://www.exploit-db.com/docs/english/28476-linux-format-string-exploitation.pdf)

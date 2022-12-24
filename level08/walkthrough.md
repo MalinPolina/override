@@ -10,7 +10,7 @@ $> ./level08 ~level09/.pass
 ERROR: Failed to open ./backups//home/users/level09/.pass
 ```
 
-Как можно заметить, программа пытается открыть ```./backups//home/users/level09/.pass``` файл.  
+Как можно заметить, программа пытается открыть ```./backups//home/users/level09/.pass```.  
 Попробуем создать этот путь в ```/tmp```.
 
 ```
